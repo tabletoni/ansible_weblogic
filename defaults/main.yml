@@ -2,4 +2,6 @@ JAVA_HOME: /u01/software/jdk1.8.0_201
 MW_HOME: /u01/app/oracle/middleware
 INVENTORY_LOC: /u01/app/oraInventory
 
-
+RUTA_PACKS: /home/tonicom
+JAVA_PACK: jdk-8u201-linux-x64.tar.gz
+WL_PACK: fmw_12.2.1.3.0_wls.jar 

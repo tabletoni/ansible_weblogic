@@ -56,18 +56,27 @@
 - name: copia java
   unarchive:
     remote_src: no
-    src: /home/tonicom/jdk-8u201-linux-x64.tar.gz
+    src: "{{ RUTA_PACKS }}/{{ JAVA_PACK }}"
     dest: /u01/software
     owner: oracle
     group: oinstall
+
+- name: copia WL
+  copy:
+    src: "{{ RUTA_PACKS }}/{{ WL_PACK }}"
+    dest: /u01/software
+    owner: oracle
+    group: oinstall
+
+
 
 - name: Ejecuta instalacion
   become: yes
   become_user: oracle
   shell: 
-    "{{ JAVA_HOME }}/bin/java -Xmx1024m -jar fmw_12.2.1.3.0_wls.jar -silent -responseFile /u01/software/wls.rsp -invPtrLoc {{ INVENTORY_LOC }}"
+    "{{ JAVA_HOME }}/bin/java -Xmx1024m -jar {{ WL_PACK }} -silent -responseFile /u01/software/wls.rsp -invPtrLoc {{ INVENTORY_LOC }}"
   args:
-    chdir: /home/oracle
+    chdir: /u01/software
   register: wlout
 
-  #- debug: msg= "{{ wlout.stdout }}"
+   #- debug: msg= "{{ wlout.stdout }}"
