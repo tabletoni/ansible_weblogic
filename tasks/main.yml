@@ -1,0 +1,73 @@
+- name: crea grupo
+  group:
+   name: oinstall
+   state: present
+   gid: 1010
+
+- name: crea user
+  user:
+    name: oracle
+    groups: oinstall
+    home: /home/oracle
+    uid: 1110
+
+- name: crea rutas
+  vars:
+    rutas:
+      - /u01/software
+      - /u01/app/oracle/middleware
+      - /u01/app/oracle/config/domains
+      - /u01/app/oracle/config/applications
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop: "{{ rutas  }}"
+
+- name: Cambia propietario
+  file:
+   path: /u01
+   state: directory
+   recurse: yes
+   owner: oracle
+   group: oinstall
+   mode: '0775'
+
+- name: Copia template bash_profile
+  template:
+    src: oracle_bash_profile.j2
+    dest: /home/oracle/.bash_profile
+    owner: oracle
+    group: oracle
+
+- name: Copia response file
+  template:
+    src: wls_rsp.j2
+    dest: /u01/software/wls.rsp
+    owner: oracle
+    group: oinstall
+
+- name: Copia oraInst.loc
+  template:
+    src: oraInst.loc.j2
+    dest: /u01/software/oraInst.loc
+    owner: oracle
+    group: oinstall
+
+- name: copia java
+  unarchive:
+    remote_src: no
+    src: /home/tonicom/jdk-8u201-linux-x64.tar.gz
+    dest: /u01/software
+    owner: oracle
+    group: oinstall
+
+- name: Ejecuta instalacion
+  become: yes
+  become_user: oracle
+  shell: 
+    "{{ JAVA_HOME }}/bin/java -Xmx1024m -jar fmw_12.2.1.3.0_wls.jar -silent -responseFile /u01/software/wls.rsp -invPtrLoc {{ INVENTORY_LOC }}"
+  args:
+    chdir: /home/oracle
+  register: wlout
+
+  #- debug: msg= "{{ wlout.stdout }}"

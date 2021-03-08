@@ -1,0 +1,5 @@
+JAVA_HOME: /u01/software/jdk1.8.0_201
+MW_HOME: /u01/app/oracle/middleware
+INVENTORY_LOC: /u01/app/oraInventory
+
+
